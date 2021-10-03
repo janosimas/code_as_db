@@ -1,0 +1,10 @@
+# Rust compilation folder
+/target
+# Database ORM data
+.butane
+# Database
+*.db
+# VScode config
+.vscode
+# Env variables
+.env
