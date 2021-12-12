@@ -1,2 +1,5 @@
 [workspace]
 members = ["code_as_db_models", "code_as_db_builder"]
+
+[patch.crates-io]
+# butane = { git = "https://github.com/Electron100/butane", branch = "fkey_self" }

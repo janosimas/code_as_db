@@ -36,9 +36,9 @@ checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
 
 [[package]]
 name = "butane"
-version = "0.4.1"
+version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "77fb0e2bee846b1e583b4772ccf17c747edd2f859c75992c0363eaceab798c06"
+checksum = "24b3963912ccb97cfe70970c041e1bad10882cb2893b0046730d8e31491f9fe7"
 dependencies = [
  "butane_codegen",
  "butane_core",
@@ -59,9 +59,9 @@ dependencies = [
 
 [[package]]
 name = "butane_core"
-version = "0.4.1"
+version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "baeab687f58e91aa3f111a90f7c722e8ffcb143cd596e7c94e85a39539f7cbae"
+checksum = "25ede810cf00f3d222fc01d83fa2e71a8c4bfb0b20cb71d6519e1b7c21ff0e7e"
 dependencies = [
  "cfg-if",
  "chrono",
