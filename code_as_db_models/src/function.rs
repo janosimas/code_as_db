@@ -116,6 +116,21 @@ impl Function {
         }
     }
 
+    pub fn new_pub_in_mod<S>(
+        name: S,
+        parameters: &[Parameter],
+        body: S,
+        return_type: Option<S>,
+        parent_mod: Module,
+    ) -> Self
+    where
+        S: Into<String>,
+    {
+        let mut func = Self::new_pub_free(name, parameters, body, return_type);
+        func.parent_mod = Some(parent_mod.into());
+        func
+    }
+
     pub fn save(&mut self, conn: &Connection) -> Result<(), butane::Error> {
         self.update_hash(conn);
 
