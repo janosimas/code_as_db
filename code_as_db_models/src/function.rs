@@ -133,10 +133,10 @@ impl Function {
         let mut hasher = DefaultHasher::new();
         self.name.hash(&mut hasher);
         if let Some(ref parent_mod) = self.parent_mod {
-            parent_mod.load(conn).unwrap().name().hash(&mut hasher);
+            parent_mod.load(conn).unwrap().pk().hash(&mut hasher);
         }
         if let Some(ref parent_strunc) = self.parent_strunc {
-            parent_strunc.load(conn).unwrap().name().hash(&mut hasher);
+            parent_strunc.load(conn).unwrap().pk().hash(&mut hasher);
         }
         self.hash = hasher.finish().to_string();
     }
