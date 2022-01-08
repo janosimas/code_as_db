@@ -3,10 +3,9 @@ use std::{
     collections::hash_map::DefaultHasher,
     hash::{Hash, Hasher},
 };
-
 use butane::{db::Connection, model, DataObject, ForeignKey, Many};
 
-use crate::{general, module::Module, struct_m::Struct};
+use crate::{general, module::Module, struct_m::Struct, error::Result, error::Error};
 
 #[model]
 #[derive(Debug)]
@@ -67,7 +66,7 @@ impl fmt::Display for Function {
                 format!(" -> {}", return_type)
             });
 
-        let conn = general::get_connection();
+        let conn = general::get_connection().unwrap();
         let parameters = self.parameters.load(&conn).unwrap();
         let parameters: String = parameters
             .into_iter()
@@ -93,16 +92,20 @@ impl Function {
         parameters: &[Parameter],
         body: S,
         return_type: Option<S>,
-    ) -> Self
+    ) -> Result<Self>
     where
         S: Into<String>,
     {
         let mut params = Many::<Parameter>::default();
         for par in parameters {
+            if par.id.is_negative() {
+                return Err(Error::InvalidParameter)
+            }
+
             params.add(par);
         }
 
-        Self {
+        Ok(Self {
             id: -1,
             is_public: true,
             name: name.into(),
@@ -113,7 +116,7 @@ impl Function {
             parent_strunc: None,
             hash: Default::default(),
             state: Default::default(),
-        }
+        })
     }
 
     pub fn new_pub_in_mod<S>(
@@ -122,17 +125,17 @@ impl Function {
         body: S,
         return_type: Option<S>,
         parent_mod: Module,
-    ) -> Self
+    ) -> Result<Self>
     where
         S: Into<String>,
     {
-        let mut func = Self::new_pub_free(name, parameters, body, return_type);
+        let mut func = Self::new_pub_free(name, parameters, body, return_type)?;
         func.parent_mod = Some(parent_mod.into());
-        func
+        Ok(func)
     }
 
-    pub fn save(&mut self, conn: &Connection) -> Result<(), butane::Error> {
-        self.update_hash(conn);
+    pub fn save(&mut self, conn: &Connection) -> Result<()> {
+        self.update_hash(conn)?;
 
         // let list = self.parameters.load(conn)?;
         // for param in  {
@@ -140,20 +143,21 @@ impl Function {
         // }
 
         // self.parameters.save(conn)?;
-        DataObject::save(self, conn)
+        Ok(DataObject::save(self, conn)?)
     }
 
     // Update the unique hash of the function hash
-    fn update_hash(&mut self, conn: &Connection) {
+    fn update_hash(&mut self, conn: &Connection) -> Result<()> {
         let mut hasher = DefaultHasher::new();
         self.name.hash(&mut hasher);
         if let Some(ref parent_mod) = self.parent_mod {
-            parent_mod.load(conn).unwrap().pk().hash(&mut hasher);
+            parent_mod.load(conn)?.pk().hash(&mut hasher);
         }
         if let Some(ref parent_strunc) = self.parent_strunc {
-            parent_strunc.load(conn).unwrap().pk().hash(&mut hasher);
+            parent_strunc.load(conn)?.pk().hash(&mut hasher);
         }
         self.hash = hasher.finish().to_string();
+        Ok(())
     }
 
     pub fn pk(&self) -> &i32 {
