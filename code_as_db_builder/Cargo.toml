@@ -7,4 +7,4 @@ edition = "2018"
 
 [dependencies]
 code_as_db_models = { path = "../code_as_db_models" }
-butane = { version = "0.4", features = ["default", "sqlite", "sqlite-bundled"] }
+butane = { version = "0.6", features = ["default", "sqlite", "sqlite-bundled"] }
